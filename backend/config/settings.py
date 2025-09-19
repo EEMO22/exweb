@@ -17,12 +17,10 @@ from decouple import config
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Security Settings - 환경변수로 보안 강화 (Coding Guidelines 준수)
-SECRET_KEY = config('SECRET_KEY')
-DEBUG = config('DEBUG', default=False, cast=bool)
+SECRET_KEY = config("SECRET_KEY")
+DEBUG = config("DEBUG", default=False, cast=bool)
 ALLOWED_HOSTS = config(
-    'ALLOWED_HOSTS', 
-    default='', 
-    cast=lambda v: [s.strip() for s in v.split(',')]
+    "ALLOWED_HOSTS", default="", cast=lambda v: [s.strip() for s in v.split(",")]
 )
 
 # Application definition - 타입별 분류로 가독성 향상
@@ -36,19 +34,19 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    'rest_framework',
-    'rest_framework_simplejwt',
-    'corsheaders',
+    "rest_framework",
+    "rest_framework_simplejwt",
+    "corsheaders",
 ]
 
 LOCAL_APPS = [
-    'accounts',
+    "accounts",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # CORS 처리를 위해 최상단 배치
+    "corsheaders.middleware.CorsMiddleware",  # CORS 처리를 위해 최상단 배치
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -67,7 +65,7 @@ TEMPLATES = [
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
-                'django.template.context_processors.debug',
+                "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
@@ -80,23 +78,23 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # Database - PostgreSQL 연결, 인코딩 문제 해결
 DATABASES = {
-    'default': {
-        'ENGINE': config('DB_ENGINE'),
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT'),
-        'OPTIONS': {
+    "default": {
+        "ENGINE": config("DB_ENGINE"),
+        "NAME": config("DB_NAME"),
+        "USER": config("DB_USER"),
+        "PASSWORD": config("DB_PASSWORD"),
+        "HOST": config("DB_HOST"),
+        "PORT": config("DB_PORT"),
+        "OPTIONS": {
             # PostgreSQL 전용 UTF-8 인코딩 설정
-            'client_encoding': 'UTF8',
+            "client_encoding": "UTF8",
             # 트랜잭션 격리 수준 설정 (데이터 일관성 보장)
-            'isolation_level': psycopg2.extensions.ISOLATION_LEVEL_READ_COMMITTED,
+            "isolation_level": psycopg2.extensions.ISOLATION_LEVEL_READ_COMMITTED,
         },
         # PostgreSQL 테스트 DB 설정
-        'TEST': {
-            'NAME': 'test_' + config('DB_NAME'),
-        }
+        "TEST": {
+            "NAME": f"test_{config('DB_NAME', cast=str)}",
+        },
     }
 }
 
@@ -118,46 +116,49 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Django REST Framework - JWT 기반 Stateless API 구현 (Guidelines 준수)
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
     ],
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
     ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 20,
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 20,
 }
 
 # JWT Settings - 토큰 수명 커스터마이징 (Stateless API 구현)
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
-    'ROTATE_REFRESH_TOKENS': True,
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": True,
 }
 
 # CORS Settings - React 개발 서버와의 통신 허용
 CORS_ALLOWED_ORIGINS = config(
-    'CORS_ALLOWED_ORIGINS',
-    default='http://localhost:3000',
-    cast=lambda v: [s.strip() for s in v.split(',')]
+    "CORS_ALLOWED_ORIGINS",
+    default="http://localhost:3000",
+    cast=lambda v: [s.strip() for s in v.split(",")],
 )
 
 # Internationalization
-LANGUAGE_CODE = 'ko-kr'
-TIME_ZONE = 'Asia/Seoul'
+LANGUAGE_CODE = "ko-kr"
+TIME_ZONE = "Asia/Seoul"
 USE_I18N = True
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# Media files - 사용자 업로드 콘텐츠용
-MEDIA_URL = 'media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# Custom User Model
+AUTH_USER_MODEL = "accounts.User"
+
+# Media files settings (이미지 업로드를 위해 필요)
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

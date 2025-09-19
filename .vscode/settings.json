@@ -1,0 +1,32 @@
+{
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit",
+    "source.fixAll.eslint": "explicit"
+  },
+
+  // Python 파일 설정 - Black 포매터 사용
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+
+  // 파일 확장자별 언어 연결
+  "files.associations": {
+    "*.py": "python"
+  },
+
+  // Python 인터프리터 경로 설정
+  "python.defaultInterpreterPath": ".venv/bin/python",
+
+  // 최신 Python 도구 설정
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.typeCheckingMode": "basic",
+
+  // Black 설정 (추가)
+  "black-formatter.args": ["--line-length=88"],
+  "black-formatter.importStrategy": "fromEnvironment"
+}
