@@ -41,6 +41,8 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "accounts",
+    "portfolios",  # 포트폴리오 관리
+    "community",  # 게시판 및 댓글 관리
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
