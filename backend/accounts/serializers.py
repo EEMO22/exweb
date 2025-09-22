@@ -62,7 +62,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             "years_of_experience",  # 경력 (선택)
             "website",  # 웹사이트 (선택)
             "phone_number",  # 전화번호 (선택)
-        ]
+        ]  # 모델의 필드 정의를 자동으로 상속받음 (DRY 원칙 준수)
 
         # 필수 입력 필드 지정
         extra_kwargs = {
@@ -91,6 +91,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         # 검증된 데이터 반환
         return attrs
 
+    # create() 메서드도 자동으로 제공됨 (필요시에만 오버라이드)
     def create(self, validated_data):
         """
         검증된 데이터로 새로운 User 객체 생성
@@ -116,10 +117,23 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         )
         return user
 
+    # 만약 Serializer로 회원가입을 구현한다면:
 
-# 여기부터 월요일에 확인
-# 여기부터 월요일에 확인
-# 여기부터 월요일에 확인
+    # class UserRegistrationSerializer(serializers.Serializer):
+    # # 모든 필드를 수동으로 정의해야 함 (코드 중복)
+    # email = serializers.EmailField(required=True)
+    # username = serializers.CharField(max_length=150, required=True)
+    # display_name = serializers.CharField(max_length=50, required=True)
+    # bio = serializers.CharField(max_length=500, required=False, allow_blank=True)
+    # specialization = serializers.CharField(max_length=100, required=False, allow_blank=True)
+    # years_of_experience = serializers.IntegerField(required=False, allow_null=True)
+    # website = serializers.URLField(required=False, allow_blank=True)
+    # phone_number = serializers.CharField(max_length=17, required=False, allow_blank=True)
+    # # ... 모델과 동일한 내용을 또 써야 함 (DRY 원칙 위반)
+
+    # def create(self, validated_data):
+    #     # 생성 로직도 직접 구현해야 함
+    #     return User.objects.create_user(**validated_data)
 
 
 class UserLoginSerializer(serializers.Serializer):
@@ -131,12 +145,21 @@ class UserLoginSerializer(serializers.Serializer):
     - 커스텀 로직이 많이 필요함 (토큰 생성 등)
 
     Guidelines: Stateless API - JWT 토큰 반환
+
+    기본 Serializer - 모든 필드를 수동으로 정의해야 함
+
+    사용 시점:
+    - 모델과 직접적인 관련이 없는 경우 (로그인, 검색 등)
+    - 복잡한 커스텀 로직이 필요한 경우
+    - 여러 모델의 데이터를 조합해야 하는 경우
     """
 
     # 로그인 입력 필드들
+    # 모든 필드를 수동으로 하나씩 정의해야 함
     email = serializers.EmailField()  # 이메일 형식 자동 검증
     password = serializers.CharField(write_only=True, style={"input_type": "password"})
 
+    # 커스텀 로직 구현 (토큰 생성 등)
     def validate(self, attrs):
         """
         로그인 인증 처리
@@ -191,6 +214,17 @@ class UserProfileSerializer(serializers.ModelSerializer):
     3. 다른 사용자의 공개 프로필 조회
 
     Guidelines: Fat Models - 모델의 메서드를 활용
+
+    ModelSerializer - 모델 기반으로 필드를 자동 생성
+
+    장점:
+    1. DRY 원칙: 모델에 정의된 필드를 재사용
+    2. 자동 생성: 필드 타입, 제약조건 등을 모델에서 가져옴
+    3. 간편함: 적은 코드로 CRUD 구현 가능
+
+    사용 시점:
+    - 모델과 1:1 대응되는 API (회원가입, 프로필 수정 등)
+    - 표준적인 CRUD 작업
     """
 
     # 읽기 전용 필드들: 모델의 메서드 결과를 JSON에 포함
@@ -210,7 +244,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = User
+        model = User  # 이 모델의 필드들을 자동으로 가져옴
 
         # 프로필에서 보여줄 필드들
         fields = [
@@ -230,7 +264,13 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "portfolio_url",  # 포트폴리오 URL (계산됨)
             "date_joined",  # 가입일 (수정 불가)
             "updated_at",  # 최종 수정일 (자동 업데이트)
-        ]
+        ]  # 사용할 필드만 선택
+
+        # 모델의 필드 정의를 자동으로 상속받음:
+        # 하지만 모델의 메서드를 직접 상속받지는 않음!
+
+        # email = models.EmailField() → serializers.EmailField() 자동 생성
+        # display_name = models.CharField(max_length=50) → serializers.CharField(max_length=50) 자동 생성
 
         # 클라이언트에서 수정할 수 없는 필드들
         read_only_fields = ["id", "email", "date_joined"]
@@ -252,6 +292,30 @@ class UserProfileSerializer(serializers.ModelSerializer):
         for attr, value in validated_data.items():
             setattr(instance, attr, value)  # instance.attr = value와 같음
 
+            # items() → dict의 키-값 쌍을 튜플로 반환
+            # setattr() → 객체의 속성을 동적으로 설정
+
+            # Python 내장 함수 - 객체의 속성을 동적으로 설정
+            # user = User()
+
+            # # 일반적인 방법
+            # user.display_name = '김디자이너'
+
+            # # setattr()를 사용한 방법 (동적으로 속성명 지정 가능)
+            # setattr(user, 'display_name', '김디자이너')
+
+            # # 반복문에서 유용함
+            # for attr, value in validated_data.items():
+            #     setattr(user, attr, value)  # user.display_name = '김디자이너' 와 동일
+
         # DB에 저장 (updated_at 필드가 자동으로 갱신됨)
         instance.save()
         return instance
+
+        # save()
+        # Django Model의 메서드 (User 모델이 상속받은 기능)
+        # Django가 자동으로 제공하는 메서드들:
+
+        # - save(): 객체를 데이터베이스에 저장
+        # - delete(): 객체를 데이터베이스에서 삭제
+        # - refresh_from_db(): 데이터베이스에서 최신 데이터로 새로고침
