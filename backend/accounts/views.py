@@ -267,6 +267,14 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             is_active=True, id=self.request.user.pk  # 현재 사용자 프로필만 조회 가능
         )
 
+        # N+1 문제란?
+        #  - 데이터베이스에서 관련된 객체를 반복적으로 조회하는 비효율적인 쿼리 패턴
+        #  - 예: 사용자 목록을 조회할 때 각 사용자의 프로필을 별도로 조회
+        # select_related란?
+        #  - Django ORM에서 제공하는 메서드
+        #  - ForeignKey 또는 OneToOneField로 연결된 객체를 한 번의 쿼리로 미리 로드
+        #  - N+1 문제를 해결하는 데 효과적
+
     def get_object(self):
         """
         현재 요청한 사용자의 프로필 반환
