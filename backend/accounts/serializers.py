@@ -233,10 +233,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         read_only=True,  # 클라이언트에서 수정할 수 없음
     )
 
-    is_experienced_designer = serializers.BooleanField(
-        source="is_experienced_designer",  # User 모델의 is_experienced_designer() 메서드 호출
-        read_only=True,
-    )
+    is_experienced_designer = serializers.BooleanField(read_only=True)
 
     portfolio_url = serializers.CharField(
         source="get_portfolio_url",  # User 모델의 get_portfolio_url() 메서드 호출

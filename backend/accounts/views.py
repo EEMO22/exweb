@@ -30,6 +30,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.exceptions import PermissionDenied
 
 
 # 우리가 만든 Serializer들 가져오기
@@ -227,7 +228,11 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     - 모델과 1:1 대응되는 표준적인 API
     - CRUD 작업이 주요 기능인 경우
 
-    Guidelines: ModelViewSet으로 표준 CRUD 구현
+    보안 정책:
+    1. 인증된 사용자만 접근 가능
+    2. 자신의 프로필만 수정 가능 (현재)
+    3. 다른 사용자 프로필 조회 차단 (현재)
+    4. 향후 공개 프로필 기능 시 권한 로직 확장 예정
     """
 
     # 이 ViewSet에서 사용할 Serializer 지정
@@ -258,7 +263,9 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         Returns:
             QuerySet: 최적화된 User 쿼리셋
         """
-        return User.objects.select_related().filter(is_active=True)
+        return User.objects.select_related().filter(
+            is_active=True, id=self.request.user.pk  # 현재 사용자 프로필만 조회 가능
+        )
 
     def get_object(self):
         """
@@ -271,6 +278,20 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             User: 현재 인증된 사용자 객체
         """
         return self.request.user
+
+    def list(self, request):
+        """
+        사용자 목록 조회 API (관리자용)
+
+        URL: GET /api/users/
+
+        현재는 인증된 사용자만 접근 가능하며,
+        자신의 프로필만 조회 가능하도록 제한되어 있음.
+        향후 관리자 기능 추가 시 권한 로직 확장 예정.
+        """
+        # 현재 정책: 본인 정보만 포함된 리스트 반환
+        user_data = UserProfileSerializer(request.user).data
+        return Response([user_data])
 
     @action(detail=False, methods=["get", "put", "patch"])
     def me(self, request):
