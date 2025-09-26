@@ -1,8 +1,9 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
+import path from 'path';
 import { defineConfig } from 'vite';
 
-// React 19 + Tailwind CSS v4 최적화 설정
+// React 19 + Tailwind CSS v4 + TypeScript 최적화 설정
 export default defineConfig({
   plugins: [
     react({
@@ -11,6 +12,18 @@ export default defineConfig({
     }),
     tailwindcss(), // Tailwind CSS v4 플러그인
   ],
+  resolve: {
+    // TypeScript path mapping과 동일하게 설정
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+      '@/components': path.resolve(__dirname, './src/components'),
+      '@/pages': path.resolve(__dirname, './src/pages'),
+      '@/services': path.resolve(__dirname, './src/services'),
+      '@/stores': path.resolve(__dirname, './src/stores'),
+      '@/types': path.resolve(__dirname, './src/types'),
+      '@/utils': path.resolve(__dirname, './src/utils'),
+    },
+  },
   server: {
     port: 3000, // 개발 서버 포트
     host: true, // 네트워크에서 접근 가능
@@ -42,7 +55,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true, // 디버깅용 소스맵 생성
-    // React 19 최적화
+    // React 19 + TypeScript 최적화
     rollupOptions: {
       output: {
         manualChunks: {

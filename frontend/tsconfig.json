@@ -1,0 +1,48 @@
+{
+  "compilerOptions": {
+    // React 19 + TypeScript 최적화 설정
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "allowJs": true, // vite.config.ts와 eslint.config.js를 포함하기 위해 변경
+    "skipLibCheck": true,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // Module Resolution
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+
+    // JSX 설정 (React 19)
+    "jsx": "react-jsx",
+
+    // Path mapping for cleaner imports
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["./*"],
+      "@/components/*": ["./components/*"],
+      "@/pages/*": ["./pages/*"],
+      "@/services/*": ["./services/*"],
+      "@/stores/*": ["./stores/*"],
+      "@/types/*": ["./types/*"],
+      "@/utils/*": ["./utils/*"]
+    },
+
+    // 코드 품질 향상 (Guidelines: strict type checking)
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+
+    // 런타임 에러 방지
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": false
+  },
+  "include": ["src/**/*", "vite.config.ts", "eslint.config.js"],
+  "exclude": ["node_modules", "dist"]
+}

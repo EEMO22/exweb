@@ -1,11 +1,30 @@
 {
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.organizeImports": "explicit",
-    "source.fixAll.eslint": "explicit"
+    "source.organizeImports": "never",
+    "source.fixAll.eslint": "never"
   },
 
-  // Python 파일 설정 - Black 포매터 사용
+  // TypeScript/React 파일 설정
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "never",
+      "source.fixAll.eslint": "never"
+    }
+  },
+
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "never",
+      "source.fixAll.eslint": "never"
+    }
+  },
+
+  // Python 파일 설정 - Black 포매터 사용 (Guidelines: PEP 8 + black)
   "[python]": {
     "editor.defaultFormatter": "ms-python.black-formatter",
     "editor.formatOnSave": true,
@@ -26,7 +45,23 @@
   "python.analysis.autoImportCompletions": true,
   "python.analysis.typeCheckingMode": "basic",
 
-  // Black 설정 (추가)
+  // Black 설정 (Guidelines: black formatter for Django)
   "black-formatter.args": ["--line-length=88"],
-  "black-formatter.importStrategy": "fromEnvironment"
+  "black-formatter.importStrategy": "fromEnvironment",
+
+  // ESLint 설정 - 경고 표시는 유지, 자동 수정만 비활성화
+  "eslint.workingDirectories": ["./frontend"],
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "eslint.run": "onType",
+  "eslint.codeAction.showDocumentation": {
+    "enable": true
+  },
+
+  // Auto-save 방지
+  "files.autoSave": "off"
 }

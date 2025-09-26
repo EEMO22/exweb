@@ -29,6 +29,7 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.exceptions import PermissionDenied
 
@@ -212,6 +213,55 @@ class AuthViewSet(viewsets.GenericViewSet):
             return Response(
                 {"error": "유효하지 않은 토큰입니다."},
                 status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    @action(detail=False, methods=["post"])
+    def token_refresh(self, request):
+        """
+        JWT 토큰 갱신 API 엔드포인트
+
+        URL: POST /api/auth/token-refresh/
+        요청 데이터: {
+            "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+        }
+
+        Why: Stateless API에서 토큰 자동 갱신으로 사용자 편의성 향상
+        Guidelines: Fat Models, Thin Views - 비즈니스 로직은 최소화하고 검증에 집중
+        """
+        try:
+            # 1. 요청에서 refresh 토큰 추출
+            refresh_token = request.data["refresh"]
+
+            if not refresh_token:
+                return Response(
+                    {"error": "refresh 토큰이 필요합니다."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # 2. RefreshToken 객체 생성 및 검증
+            refresh = RefreshToken(refresh_token)
+
+            # 3. 새로운 access 토큰 생성
+            access_token = str(refresh.access_token)
+
+            # 4. 성공 응답 반환
+            return Response(
+                {"access": access_token, "message": "토큰이 갱신되었습니다."},
+                status=status.HTTP_200_OK,
+            )
+
+        except TokenError as e:
+            # 5. 토큰 에러 처리 (만료, 유효하지 않음 등)
+            return Response(
+                {"error": "유효하지 않은 refresh 토큰입니다."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        except Exception as e:
+            # 6. 기타 예외 처리 - Guidelines: Comprehensive error handling
+            return Response(
+                {"error": "토큰 갱신 중 오류가 발생했습니다."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
 
