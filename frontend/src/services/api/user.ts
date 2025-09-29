@@ -45,9 +45,9 @@ export const userAPI = {
       const formData = new FormData();
       formData.append('profile_image', imageFile);
 
-      const response = await apiClient.patch<User>('/user/me/', formData, {
+      const response = await apiClient.patch<User>('/users/me/', formData, {
         headers: {
-          'Content-type': 'multipart/form-data',
+          'Content-Type': 'multipart/form-data',
         },
       });
 
