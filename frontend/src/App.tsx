@@ -11,6 +11,7 @@ import { useAuthStore } from './store/authStore';
 // 페이지 컴포넌트들 (생성 예정)
 // import HomePage from './pages/HomePage';
 import LoginPage from './pages/auth/LoginPage';
+import MaiuUploadPage from './pages/maiu/MaiuUploadPage';
 // import RegisterPage from './pages/auth/RegisterPage';
 // import DashboardPage from './pages/DashboardPage';
 // import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -54,6 +55,7 @@ function App() {
         <Routes>
           {/* <Route path="/" element={<HomePage />} /> */}
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/maiu/upload" element={<MaiuUploadPage />} />
           {/* <Route path="/register" element={<RegisterPage />} />
           <Route
             path="/dashboard"

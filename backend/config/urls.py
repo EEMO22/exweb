@@ -29,6 +29,7 @@ urlpatterns = [
     # 추가 작업할 앱들의 URL 패턴:
     # path("api/", include('portfolio.urls')),
     # path("api/", include('community.urls')),
+    path("api/maiu/", include("maiu.urls")),
 ]
 
 # Development: Serve media files during development only

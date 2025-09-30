@@ -44,6 +44,7 @@ LOCAL_APPS = [
     "accounts",
     "portfolios",  # 포트폴리오 관리
     "community",  # 게시판 및 댓글 관리
+    "maiu",  # MAIU 관련 기능
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -58,6 +59,27 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+# NCP Object Storage 설정 추가
+try:
+    NCP_OBJECT_STORAGE_ENDPOINT = config(
+        "NCP_OBJECT_STORAGE_ENDPOINT", "https://kr.object.ncloudstorage.com"
+    )
+    NCP_ACCESS_KEY_ID = config("NCP_ACCESS_KEY_ID")
+    NCP_SECRET_ACCESS_KEY = config("NCP_SECRET_ACCESS_KEY")
+    NCP_REGION = config("NCP_REGION", default="kr-standard")
+    NCP_BUCKET_NAME = config("NCP_BUCKET_NAME", "maiu.bucket.test")
+
+    # Why: 개발 환경에서 디버그 정보 출력 (민감한 정보는 마스킹)
+    if DEBUG:
+        print(f"[DEBUG] NCP Endpoint: {NCP_OBJECT_STORAGE_ENDPOINT}")
+        print(f"[DEBUG] NCP Region: {NCP_REGION}")
+        print(f"[DEBUG] NCP Bucket: {NCP_BUCKET_NAME}")
+        print(f"[DEBUG] NCP Access Key: {NCP_ACCESS_KEY_ID[:10]}...")
+
+except Exception as e:
+    raise Exception(f"NCP 환경변수 설정 오류: {str(e)}")
+
 
 ROOT_URLCONF = "config.urls"
 
